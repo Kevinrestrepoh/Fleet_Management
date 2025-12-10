@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package vehicle;
+
+import "common.proto";
+
+option go_package = "proto/vehiclepb";
+option rust_package = "vehicle";
+
+// Telemetry sent from vehicle to server
+message Telemetry {
+  uint32 vehicle_id = 1;
+  int64 timestamp_ms = 2;
+
+  double lat = 3;
+  double lon = 4;
+
+  float speed_kmh = 5;
+  uint32 battery_percent = 6;
+  float engine_temp_c = 7;
+}
+
+// Streaming service for telemetry + commands
+service VehicleTelemetryService {
+  rpc StreamTelemetry(stream Telemetry) returns (stream common.Command);
+}

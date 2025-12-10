@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package common;
+
+enum Type {
+  UNKNOWN = 0;
+  UPDATE_RATE = 1; // change telemetry interval
+  PING = 2;        // health check
+  SHUTDOWN = 3;    // stop simulator
+}
+
+message Command {
+    Type type = 1;
+    uint32 value = 2;
+}

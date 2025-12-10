@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package control;
+
+import "common.proto";
+
+option go_package = "proto/controlpb";
+option rust_package = "control";
+
+message SendCommandRequest {
+  uint32 vehicle_id = 1;
+  common.Command command = 2;
+}
+
+message SendCommandResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+service ControlService {
+  rpc SendCommand(SendCommandRequest) returns (SendCommandResponse);
+}
