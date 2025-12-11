@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package common;
 
+option go_package = "proto/commonpb";
+
 enum Type {
   UNKNOWN = 0;
   UPDATE_RATE = 1; // change telemetry interval

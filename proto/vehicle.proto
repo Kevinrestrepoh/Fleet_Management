@@ -5,7 +5,6 @@ package vehicle;
 import "common.proto";
 
 option go_package = "proto/vehiclepb";
-option rust_package = "vehicle";
 
 // Telemetry sent from vehicle to server
 message Telemetry {
