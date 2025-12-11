@@ -9,7 +9,6 @@ package vehiclepb
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	commonpb "proto/commonpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,6 +20,110 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+type Type int32
+
+const (
+	Type_UNKNOWN     Type = 0
+	Type_UPDATE_RATE Type = 1 // change telemetry interval
+	Type_PING        Type = 2 // health check
+	Type_SHUTDOWN    Type = 3 // stop simulator
+)
+
+// Enum value maps for Type.
+var (
+	Type_name = map[int32]string{
+		0: "UNKNOWN",
+		1: "UPDATE_RATE",
+		2: "PING",
+		3: "SHUTDOWN",
+	}
+	Type_value = map[string]int32{
+		"UNKNOWN":     0,
+		"UPDATE_RATE": 1,
+		"PING":        2,
+		"SHUTDOWN":    3,
+	}
+)
+
+func (x Type) Enum() *Type {
+	p := new(Type)
+	*p = x
+	return p
+}
+
+func (x Type) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Type) Descriptor() protoreflect.EnumDescriptor {
+	return file_vehicle_proto_enumTypes[0].Descriptor()
+}
+
+func (Type) Type() protoreflect.EnumType {
+	return &file_vehicle_proto_enumTypes[0]
+}
+
+func (x Type) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Type.Descriptor instead.
+func (Type) EnumDescriptor() ([]byte, []int) {
+	return file_vehicle_proto_rawDescGZIP(), []int{0}
+}
+
+type Command struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          Type                   `protobuf:"varint,1,opt,name=type,proto3,enum=vehicle.Type" json:"type,omitempty"`
+	Value         uint32                 `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Command) Reset() {
+	*x = Command{}
+	mi := &file_vehicle_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Command) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Command) ProtoMessage() {}
+
+func (x *Command) ProtoReflect() protoreflect.Message {
+	mi := &file_vehicle_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Command.ProtoReflect.Descriptor instead.
+func (*Command) Descriptor() ([]byte, []int) {
+	return file_vehicle_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Command) GetType() Type {
+	if x != nil {
+		return x.Type
+	}
+	return Type_UNKNOWN
+}
+
+func (x *Command) GetValue() uint32 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
 
 // Telemetry sent from vehicle to server
 type Telemetry struct {
@@ -38,7 +141,7 @@ type Telemetry struct {
 
 func (x *Telemetry) Reset() {
 	*x = Telemetry{}
-	mi := &file_vehicle_proto_msgTypes[0]
+	mi := &file_vehicle_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -50,7 +153,7 @@ func (x *Telemetry) String() string {
 func (*Telemetry) ProtoMessage() {}
 
 func (x *Telemetry) ProtoReflect() protoreflect.Message {
-	mi := &file_vehicle_proto_msgTypes[0]
+	mi := &file_vehicle_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +166,7 @@ func (x *Telemetry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Telemetry.ProtoReflect.Descriptor instead.
 func (*Telemetry) Descriptor() ([]byte, []int) {
-	return file_vehicle_proto_rawDescGZIP(), []int{0}
+	return file_vehicle_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Telemetry) GetVehicleId() uint32 {
@@ -119,7 +222,10 @@ var File_vehicle_proto protoreflect.FileDescriptor
 
 const file_vehicle_proto_rawDesc = "" +
 	"\n" +
-	"\rvehicle.proto\x12\avehicle\x1a\fcommon.proto\"\xdb\x01\n" +
+	"\rvehicle.proto\x12\avehicle\"B\n" +
+	"\aCommand\x12!\n" +
+	"\x04type\x18\x01 \x01(\x0e2\r.vehicle.TypeR\x04type\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\rR\x05value\"\xdb\x01\n" +
 	"\tTelemetry\x12\x1d\n" +
 	"\n" +
 	"vehicle_id\x18\x01 \x01(\rR\tvehicleId\x12!\n" +
@@ -128,9 +234,14 @@ const file_vehicle_proto_rawDesc = "" +
 	"\x03lon\x18\x04 \x01(\x01R\x03lon\x12\x1b\n" +
 	"\tspeed_kmh\x18\x05 \x01(\x02R\bspeedKmh\x12'\n" +
 	"\x0fbattery_percent\x18\x06 \x01(\rR\x0ebatteryPercent\x12\"\n" +
-	"\rengine_temp_c\x18\a \x01(\x02R\vengineTempC2U\n" +
-	"\x17VehicleTelemetryService\x12:\n" +
-	"\x0fStreamTelemetry\x12\x12.vehicle.Telemetry\x1a\x0f.common.Command(\x010\x01B\x11Z\x0fproto/vehiclepbb\x06proto3"
+	"\rengine_temp_c\x18\a \x01(\x02R\vengineTempC*<\n" +
+	"\x04Type\x12\v\n" +
+	"\aUNKNOWN\x10\x00\x12\x0f\n" +
+	"\vUPDATE_RATE\x10\x01\x12\b\n" +
+	"\x04PING\x10\x02\x12\f\n" +
+	"\bSHUTDOWN\x10\x032V\n" +
+	"\x17VehicleTelemetryService\x12;\n" +
+	"\x0fStreamTelemetry\x12\x12.vehicle.Telemetry\x1a\x10.vehicle.Command(\x010\x01B\x11Z\x0fproto/vehiclepbb\x06proto3"
 
 var (
 	file_vehicle_proto_rawDescOnce sync.Once
@@ -144,19 +255,22 @@ func file_vehicle_proto_rawDescGZIP() []byte {
 	return file_vehicle_proto_rawDescData
 }
 
-var file_vehicle_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_vehicle_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_vehicle_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_vehicle_proto_goTypes = []any{
-	(*Telemetry)(nil),        // 0: vehicle.Telemetry
-	(*commonpb.Command)(nil), // 1: common.Command
+	(Type)(0),         // 0: vehicle.Type
+	(*Command)(nil),   // 1: vehicle.Command
+	(*Telemetry)(nil), // 2: vehicle.Telemetry
 }
 var file_vehicle_proto_depIdxs = []int32{
-	0, // 0: vehicle.VehicleTelemetryService.StreamTelemetry:input_type -> vehicle.Telemetry
-	1, // 1: vehicle.VehicleTelemetryService.StreamTelemetry:output_type -> common.Command
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: vehicle.Command.type:type_name -> vehicle.Type
+	2, // 1: vehicle.VehicleTelemetryService.StreamTelemetry:input_type -> vehicle.Telemetry
+	1, // 2: vehicle.VehicleTelemetryService.StreamTelemetry:output_type -> vehicle.Command
+	2, // [2:3] is the sub-list for method output_type
+	1, // [1:2] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_vehicle_proto_init() }
@@ -169,13 +283,14 @@ func file_vehicle_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_vehicle_proto_rawDesc), len(file_vehicle_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   1,
+			NumEnums:      1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_vehicle_proto_goTypes,
 		DependencyIndexes: file_vehicle_proto_depIdxs,
+		EnumInfos:         file_vehicle_proto_enumTypes,
 		MessageInfos:      file_vehicle_proto_msgTypes,
 	}.Build()
 	File_vehicle_proto = out.File

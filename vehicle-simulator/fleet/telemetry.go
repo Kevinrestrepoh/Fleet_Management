@@ -1,0 +1,45 @@
+package fleet
+
+import (
+	"math/rand"
+	"time"
+
+	"github.com/Kevinrestrepoh/vehicle-simulator/proto/vehiclepb"
+)
+
+func (v *Vehicle) telemetryLoop() {
+	for {
+		v.move()
+		t := v.generateTelemetry()
+
+		_ = v.stream.Send(t)
+
+		time.Sleep(v.UpdateInterval)
+	}
+}
+
+func (v *Vehicle) move() {
+	// Random small movement
+	v.Lat += (rand.Float64() - 0.5) * 0.0005
+	v.Lon += (rand.Float64() - 0.5) * 0.0005
+
+	v.EngineTemp += (rand.Float64() - 0.5) * 0.5
+
+	// Drain battery
+	v.Battery -= rand.Intn(2)
+	if v.Battery < 0 {
+		v.Battery = 0
+	}
+}
+
+func (v *Vehicle) generateTelemetry() *vehiclepb.Telemetry {
+	return &vehiclepb.Telemetry{
+		VehicleId:      v.ID,
+		TimestampMs:    time.Now().UnixMilli(),
+		Lat:            v.Lat,
+		Lon:            v.Lon,
+		SpeedKmh:       float32(v.Speed),
+		BatteryPercent: uint32(v.Battery),
+		EngineTempC:    float32(v.EngineTemp),
+	}
+}

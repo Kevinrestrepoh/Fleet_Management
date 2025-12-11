@@ -2,13 +2,23 @@ syntax = "proto3";
 
 package control;
 
-import "common.proto";
-
 option go_package = "proto/controlpb";
+
+enum Type {
+  UNKNOWN = 0;
+  UPDATE_RATE = 1; // change telemetry interval
+  PING = 2;        // health check
+  SHUTDOWN = 3;    // stop simulator
+}
+
+message Command {
+    Type type = 1;
+    uint32 value = 2;
+}
 
 message SendCommandRequest {
   uint32 vehicle_id = 1;
-  common.Command command = 2;
+  Command command = 2;
 }
 
 message SendCommandResponse {

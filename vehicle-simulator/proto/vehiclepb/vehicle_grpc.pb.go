@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	commonpb "proto/commonpb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -29,7 +28,7 @@ const (
 //
 // Streaming service for telemetry + commands
 type VehicleTelemetryServiceClient interface {
-	StreamTelemetry(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Telemetry, commonpb.Command], error)
+	StreamTelemetry(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Telemetry, Command], error)
 }
 
 type vehicleTelemetryServiceClient struct {
@@ -40,18 +39,18 @@ func NewVehicleTelemetryServiceClient(cc grpc.ClientConnInterface) VehicleTeleme
 	return &vehicleTelemetryServiceClient{cc}
 }
 
-func (c *vehicleTelemetryServiceClient) StreamTelemetry(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Telemetry, commonpb.Command], error) {
+func (c *vehicleTelemetryServiceClient) StreamTelemetry(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Telemetry, Command], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &VehicleTelemetryService_ServiceDesc.Streams[0], VehicleTelemetryService_StreamTelemetry_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[Telemetry, commonpb.Command]{ClientStream: stream}
+	x := &grpc.GenericClientStream[Telemetry, Command]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type VehicleTelemetryService_StreamTelemetryClient = grpc.BidiStreamingClient[Telemetry, commonpb.Command]
+type VehicleTelemetryService_StreamTelemetryClient = grpc.BidiStreamingClient[Telemetry, Command]
 
 // VehicleTelemetryServiceServer is the server API for VehicleTelemetryService service.
 // All implementations must embed UnimplementedVehicleTelemetryServiceServer
@@ -59,7 +58,7 @@ type VehicleTelemetryService_StreamTelemetryClient = grpc.BidiStreamingClient[Te
 //
 // Streaming service for telemetry + commands
 type VehicleTelemetryServiceServer interface {
-	StreamTelemetry(grpc.BidiStreamingServer[Telemetry, commonpb.Command]) error
+	StreamTelemetry(grpc.BidiStreamingServer[Telemetry, Command]) error
 	mustEmbedUnimplementedVehicleTelemetryServiceServer()
 }
 
@@ -70,7 +69,7 @@ type VehicleTelemetryServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedVehicleTelemetryServiceServer struct{}
 
-func (UnimplementedVehicleTelemetryServiceServer) StreamTelemetry(grpc.BidiStreamingServer[Telemetry, commonpb.Command]) error {
+func (UnimplementedVehicleTelemetryServiceServer) StreamTelemetry(grpc.BidiStreamingServer[Telemetry, Command]) error {
 	return status.Error(codes.Unimplemented, "method StreamTelemetry not implemented")
 }
 func (UnimplementedVehicleTelemetryServiceServer) mustEmbedUnimplementedVehicleTelemetryServiceServer() {
@@ -96,11 +95,11 @@ func RegisterVehicleTelemetryServiceServer(s grpc.ServiceRegistrar, srv VehicleT
 }
 
 func _VehicleTelemetryService_StreamTelemetry_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(VehicleTelemetryServiceServer).StreamTelemetry(&grpc.GenericServerStream[Telemetry, commonpb.Command]{ServerStream: stream})
+	return srv.(VehicleTelemetryServiceServer).StreamTelemetry(&grpc.GenericServerStream[Telemetry, Command]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type VehicleTelemetryService_StreamTelemetryServer = grpc.BidiStreamingServer[Telemetry, commonpb.Command]
+type VehicleTelemetryService_StreamTelemetryServer = grpc.BidiStreamingServer[Telemetry, Command]
 
 // VehicleTelemetryService_ServiceDesc is the grpc.ServiceDesc for VehicleTelemetryService service.
 // It's only intended for direct use with grpc.RegisterService,

@@ -2,9 +2,19 @@ syntax = "proto3";
 
 package vehicle;
 
-import "common.proto";
-
 option go_package = "proto/vehiclepb";
+
+enum Type {
+  UNKNOWN = 0;
+  UPDATE_RATE = 1; // change telemetry interval
+  PING = 2;        // health check
+  SHUTDOWN = 3;    // stop simulator
+}
+
+message Command {
+    Type type = 1;
+    uint32 value = 2;
+}
 
 // Telemetry sent from vehicle to server
 message Telemetry {
@@ -21,5 +31,5 @@ message Telemetry {
 
 // Streaming service for telemetry + commands
 service VehicleTelemetryService {
-  rpc StreamTelemetry(stream Telemetry) returns (stream common.Command);
+  rpc StreamTelemetry(stream Telemetry) returns (stream Command);
 }
