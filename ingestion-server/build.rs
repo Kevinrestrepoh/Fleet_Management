@@ -1,46 +1,34 @@
-use std::error:Error;
+use std::{error::Error, fs, path::PathBuf};
 
 fn main() -> Result<(), Box<dyn Error>> {
-    dotenvy::dotenv().ok();
+    let proto_dir = PathBuf::from("../proto/");
 
-    tonic_build::compile_protos("");
+    if !proto_dir.exists() {
+        panic!("proto directory not found: {:?}", proto_dir);
+    }
 
-    let proto_dir = match env::var("PROTO_DIR") {
-         Ok(val) => val,
-         Err(_) => {
-             eprintln!("ERROR: PROTO_DIR environment variable is not set.");
-             std::process::exit(1);
-         }
-     };
+    // Collect all the .proto files
+    let mut protos = Vec::new();
+    for entry in fs::read_dir(&proto_dir)? {
+        let path = entry?.path();
+        if path.extension().is_some_and(|ext| ext == "proto") {
+            protos.push(path);
+        }
+    }
 
-     let proto_dir_path = PathBuf::from(&proto_dir);
+    if protos.is_empty() {
+        panic!("proto directory not found: {:?}", proto_dir);
+    }
 
-     if !proto_dir_path.exists() {
-         eprintln!("ERROR: proto directory not found: {}", proto_dir);
-         std::process::exit(1);
-     }
+    // Compile using tonic-build
+    tonic_prost_build::configure()
+        .build_server(true)
+        .build_client(false)
+        .compile_protos(&protos, &[proto_dir])
+        .map_err(|e| {
+            eprintln!("Failed to compile protobufs: {e}");
+            e
+        })?;
 
-     // Collect all the .proto files
-     let mut protos = Vec::new();
-     for entry in fs::read_dir(&proto_dir_path)? {
-         let path = entry?.path();
-         if path.extension().map(|x| x == "proto").unwrap_or(false) {
-             protos.push(path);
-         }
-     }
-
-     if protos.is_empty() {
-         eprintln!("ERROR: No .proto files found in {}", proto_dir);
-         std::process::exit(1);
-     }
-
-     // Compile using tonic-build
-     tonic_build::configure()
-         .compile(&protos, &[proto_dir_path])
-         .map_err(|e| {
-             eprintln!("Failed to compile protobufs: {e}");
-             e
-         })?;
-
-     Ok(())
+    Ok(())
 }
