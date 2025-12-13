@@ -13,5 +13,5 @@ sqlx = {version = "0.8.6", features = ["postgres", "runtime-tokio", "macros"]}
 dotenv = "0.15.0"
 prost = "0.14.1"
 
-[build_dependencies]
+[build-dependencies]
 tonic-build = "0.14.2"

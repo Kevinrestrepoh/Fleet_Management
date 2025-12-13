@@ -13,7 +13,7 @@ func (v *Vehicle) autonomousBehaviorLoop() {
 		delay := time.Duration(10+rand.Intn(20)) * time.Second
 		time.Sleep(delay)
 
-		// If battery low -> shutdown
+		// If battery low, shutdown
 		if v.Battery < 5 {
 			log.Printf("[veh %d] auto-shutdown: battery low", v.ID)
 			v.stream.SendCommand(vehiclepb.Type_SHUTDOWN, 0)
