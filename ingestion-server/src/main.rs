@@ -14,6 +14,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let registry = VehicleRegistry::new();
     let vehicle_service = VehicleTelemetryServiceImpl::new(registry);
 
+    println!("Server running on port: {}", addr);
+
     Server::builder()
         .add_service(VehicleTelemetryServiceServer::new(vehicle_service))
         .serve(addr)
