@@ -10,7 +10,8 @@ import (
 
 type Stream interface {
 	Send(*vehiclepb.Telemetry) error
-	SendCommand(vehiclepb.Type, uint32) error
+	Recv() (*vehiclepb.Command, error)
+	Close() error
 }
 
 type VehicleStream struct {
@@ -21,12 +22,12 @@ func (s *VehicleStream) Send(t *vehiclepb.Telemetry) error {
 	return s.stream.Send(t)
 }
 
-func (s *VehicleStream) SendCommand(t vehiclepb.Type, val uint32) error {
-	cmd := &vehiclepb.Command{
-		Type:  t,
-		Value: val,
-	}
-	return s.stream.SendMsg(cmd)
+func (s *VehicleStream) Recv() (*vehiclepb.Command, error) {
+	return s.stream.Recv()
+}
+
+func (s *VehicleStream) Close() error {
+	return s.stream.CloseSend()
 }
 
 func connectVehicleStream(addr string) (Stream, error) {

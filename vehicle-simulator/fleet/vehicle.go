@@ -14,7 +14,8 @@ type Vehicle struct {
 	EngineTemp     float64
 	UpdateInterval time.Duration
 
-	stream Stream
+	running bool
+	stream  Stream
 }
 
 func StartVehicle(id int, addr string) {
@@ -26,6 +27,7 @@ func StartVehicle(id int, addr string) {
 		Battery:        100,
 		EngineTemp:     60 + rand.Float64()*10,
 		UpdateInterval: 500 * time.Millisecond,
+		running:        true,
 	}
 
 	stream, err := connectVehicleStream(addr)
@@ -35,7 +37,7 @@ func StartVehicle(id int, addr string) {
 	}
 	v.stream = stream
 
-	go v.autonomousBehaviorLoop()
+	go v.commandLoop()
 
 	v.telemetryLoop()
 }

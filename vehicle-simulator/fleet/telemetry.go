@@ -8,7 +8,7 @@ import (
 )
 
 func (v *Vehicle) telemetryLoop() {
-	for {
+	for v.running {
 		v.move()
 		t := v.generateTelemetry()
 
@@ -29,6 +29,8 @@ func (v *Vehicle) move() {
 	v.Battery -= rand.Intn(2)
 	if v.Battery < 0 {
 		v.Battery = 0
+		v.running = false
+		v.stream.Close()
 	}
 }
 
