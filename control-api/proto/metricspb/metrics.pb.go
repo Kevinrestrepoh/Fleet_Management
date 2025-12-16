@@ -59,12 +59,11 @@ func (*Empty) Descriptor() ([]byte, []int) {
 
 type FleetMetrics struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
-	TotalVehicles      uint32                 `protobuf:"varint,1,opt,name=total_vehicles,json=totalVehicles,proto3" json:"total_vehicles,omitempty"`
-	ActiveVehicles     uint32                 `protobuf:"varint,2,opt,name=active_vehicles,json=activeVehicles,proto3" json:"active_vehicles,omitempty"`
-	LowBatteryVehicles uint32                 `protobuf:"varint,3,opt,name=low_battery_vehicles,json=lowBatteryVehicles,proto3" json:"low_battery_vehicles,omitempty"`
-	AvgSpeedKmh        float32                `protobuf:"fixed32,4,opt,name=avg_speed_kmh,json=avgSpeedKmh,proto3" json:"avg_speed_kmh,omitempty"`
-	AvgEngineTempC     float32                `protobuf:"fixed32,5,opt,name=avg_engine_temp_c,json=avgEngineTempC,proto3" json:"avg_engine_temp_c,omitempty"`
-	TimestampMs        int64                  `protobuf:"varint,6,opt,name=timestamp_ms,json=timestampMs,proto3" json:"timestamp_ms,omitempty"`
+	ActiveVehicles     uint32                 `protobuf:"varint,1,opt,name=active_vehicles,json=activeVehicles,proto3" json:"active_vehicles,omitempty"`
+	LowBatteryVehicles uint32                 `protobuf:"varint,2,opt,name=low_battery_vehicles,json=lowBatteryVehicles,proto3" json:"low_battery_vehicles,omitempty"`
+	AvgSpeedKmh        float32                `protobuf:"fixed32,3,opt,name=avg_speed_kmh,json=avgSpeedKmh,proto3" json:"avg_speed_kmh,omitempty"`
+	AvgEngineTempC     float32                `protobuf:"fixed32,4,opt,name=avg_engine_temp_c,json=avgEngineTempC,proto3" json:"avg_engine_temp_c,omitempty"`
+	TimestampMs        int64                  `protobuf:"varint,5,opt,name=timestamp_ms,json=timestampMs,proto3" json:"timestamp_ms,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -97,13 +96,6 @@ func (x *FleetMetrics) ProtoReflect() protoreflect.Message {
 // Deprecated: Use FleetMetrics.ProtoReflect.Descriptor instead.
 func (*FleetMetrics) Descriptor() ([]byte, []int) {
 	return file_metrics_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *FleetMetrics) GetTotalVehicles() uint32 {
-	if x != nil {
-		return x.TotalVehicles
-	}
-	return 0
 }
 
 func (x *FleetMetrics) GetActiveVehicles() uint32 {
@@ -146,14 +138,13 @@ var File_metrics_proto protoreflect.FileDescriptor
 const file_metrics_proto_rawDesc = "" +
 	"\n" +
 	"\rmetrics.proto\x12\ametrics\"\a\n" +
-	"\x05Empty\"\x82\x02\n" +
-	"\fFleetMetrics\x12%\n" +
-	"\x0etotal_vehicles\x18\x01 \x01(\rR\rtotalVehicles\x12'\n" +
-	"\x0factive_vehicles\x18\x02 \x01(\rR\x0eactiveVehicles\x120\n" +
-	"\x14low_battery_vehicles\x18\x03 \x01(\rR\x12lowBatteryVehicles\x12\"\n" +
-	"\ravg_speed_kmh\x18\x04 \x01(\x02R\vavgSpeedKmh\x12)\n" +
-	"\x11avg_engine_temp_c\x18\x05 \x01(\x02R\x0eavgEngineTempC\x12!\n" +
-	"\ftimestamp_ms\x18\x06 \x01(\x03R\vtimestampMs2O\n" +
+	"\x05Empty\"\xdb\x01\n" +
+	"\fFleetMetrics\x12'\n" +
+	"\x0factive_vehicles\x18\x01 \x01(\rR\x0eactiveVehicles\x120\n" +
+	"\x14low_battery_vehicles\x18\x02 \x01(\rR\x12lowBatteryVehicles\x12\"\n" +
+	"\ravg_speed_kmh\x18\x03 \x01(\x02R\vavgSpeedKmh\x12)\n" +
+	"\x11avg_engine_temp_c\x18\x04 \x01(\x02R\x0eavgEngineTempC\x12!\n" +
+	"\ftimestamp_ms\x18\x05 \x01(\x03R\vtimestampMs2O\n" +
 	"\x0eMetricsService\x12=\n" +
 	"\x12StreamFleetMetrics\x12\x0e.metrics.Empty\x1a\x15.metrics.FleetMetrics0\x01B\x11Z\x0fproto/metricspbb\x06proto3"
 

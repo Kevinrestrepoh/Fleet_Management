@@ -7,14 +7,13 @@ option go_package = "proto/metricspb";
 message Empty {}
 
 message FleetMetrics {
-  uint32 total_vehicles = 1;
-  uint32 active_vehicles = 2;
-  uint32 low_battery_vehicles = 3;
+  uint32 active_vehicles = 1;
+  uint32 low_battery_vehicles = 2;
 
-  float avg_speed_kmh = 4;
-  float avg_engine_temp_c = 5;
+  float avg_speed_kmh = 3;
+  float avg_engine_temp_c = 4;
 
-  int64 timestamp_ms = 6;
+  int64 timestamp_ms = 5;
 }
 
 service MetricsService {

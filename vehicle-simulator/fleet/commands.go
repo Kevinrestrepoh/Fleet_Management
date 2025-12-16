@@ -13,6 +13,7 @@ func (v *Vehicle) commandLoop() {
 		if err != nil {
 			log.Printf("[veh %d] command stream closed: %v", v.ID, err)
 			v.running = false
+			v.stream.Close()
 			return
 		}
 
