@@ -1,8 +1,8 @@
-use super::registry::VehicleRegistry;
 use crate::pb::control::{
     SendCommandRequest, SendCommandResponse, control_service_server::ControlService,
 };
 use crate::pb::vehicle::Command;
+use crate::vehicle_registry::registry::VehicleRegistry;
 use tonic::{Request, Response, Status};
 
 pub struct ControlServiceImpl {

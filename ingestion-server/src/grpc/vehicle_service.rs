@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use tokio::sync::mpsc;
 use tokio_stream::{StreamExt, wrappers::ReceiverStream};
 use tonic::{Request, Response, Status};
@@ -5,16 +7,20 @@ use tonic::{Request, Response, Status};
 use crate::pb::vehicle::{
     Command, Telemetry, vehicle_telemetry_service_server::VehicleTelemetryService,
 };
-
-use super::registry::VehicleRegistry;
+use crate::state::{state_store::StateStore, vehicle_state::VehicleState};
+use crate::vehicle_registry::registry::VehicleRegistry;
 
 pub struct VehicleTelemetryServiceImpl {
     registry: VehicleRegistry,
+    state_store: StateStore,
 }
 
 impl VehicleTelemetryServiceImpl {
-    pub fn new(registry: VehicleRegistry) -> Self {
-        Self { registry }
+    pub fn new(registry: VehicleRegistry, state_store: StateStore) -> Self {
+        Self {
+            registry,
+            state_store,
+        }
     }
 }
 
@@ -31,6 +37,7 @@ impl VehicleTelemetryService for VehicleTelemetryServiceImpl {
         let (tx, rx) = mpsc::channel::<Result<Command, Status>>(32);
 
         let registry = self.registry.clone();
+        let state_store = self.state_store.clone();
 
         tokio::spawn(async move {
             let mut vehicle_id: Option<u32> = None;
@@ -43,11 +50,14 @@ impl VehicleTelemetryService for VehicleTelemetryServiceImpl {
                     vehicle_id = Some(vid);
                 }
 
-                // Process telemetry (for now just log)
-                println!(
-                    "telemetry received: vehicle={} lat={} lon={} battery={}",
-                    vid, telemetry.lat, telemetry.lon, telemetry.battery_percent
-                );
+                let state = VehicleState {
+                    speed_kmh: telemetry.speed_kmh,
+                    battery: telemetry.battery_percent,
+                    engine_temp: telemetry.engine_temp_c,
+                    last_seen: Instant::now(),
+                };
+                println!("telemetry received: {:?}", state);
+                state_store.upsert(vid, state).await;
             }
 
             if let Some(id) = vehicle_id {
