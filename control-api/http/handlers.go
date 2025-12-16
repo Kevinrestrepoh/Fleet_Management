@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -10,11 +11,11 @@ import (
 )
 
 type Handler struct {
-	ingestion *grpc.IngestionClient
+	client *grpc.Client
 }
 
-func NewHandler(ingestion *grpc.IngestionClient) *Handler {
-	return &Handler{ingestion: ingestion}
+func NewHandler(client *grpc.Client) *Handler {
+	return &Handler{client}
 }
 
 func (h *Handler) SendCommand(c echo.Context) error {
@@ -38,7 +39,7 @@ func (h *Handler) SendCommand(c echo.Context) error {
 		})
 	}
 
-	err = h.ingestion.SendCommand(uint32(vehicleID), req, c.Request().Context())
+	err = h.client.SendCommand(uint32(vehicleID), req, c.Request().Context())
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"error": err.Error(),
@@ -48,4 +49,39 @@ func (h *Handler) SendCommand(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"success": true,
 	})
+}
+
+func (h *Handler) MetricsSSE(c echo.Context) error {
+	stream, err := h.client.Stream(c.Request().Context())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res := c.Response()
+	res.Header().Set(echo.HeaderContentType, "text/event-stream")
+	res.Header().Set(echo.HeaderCacheControl, "no-cache")
+	res.Header().Set(echo.HeaderConnection, "keep-alive")
+	res.WriteHeader(http.StatusOK)
+
+	for {
+		metrics, err := stream.Recv()
+		if err != nil {
+			return nil
+		}
+
+		payload, err := json.Marshal(metrics)
+		if err != nil {
+			continue
+		}
+
+		res.Write([]byte("data: "))
+		res.Write(payload)
+		res.Write([]byte("\n\n"))
+
+		if flusher, ok := res.Writer.(http.Flusher); ok {
+			flusher.Flush()
+		}
+	}
 }

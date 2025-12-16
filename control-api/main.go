@@ -19,6 +19,7 @@ func main() {
 	handler := http.NewHandler(ingestion)
 
 	e.POST("/vehicles/:id/command", handler.SendCommand)
+	e.GET("/metrics/stream", handler.MetricsSSE)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
