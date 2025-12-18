@@ -23,10 +23,21 @@ func (v *Vehicle) move() {
 	v.Lat += (rand.Float64() - 0.5) * 0.0005
 	v.Lon += (rand.Float64() - 0.5) * 0.0005
 
-	v.EngineTemp += (rand.Float64() - 0.5) * 0.5
+	v.Speed += (rand.Float64() - 0.5) * 5
+	if v.Speed < 0 {
+		v.Speed = 0
+	}
 
-	// Drain battery
-	v.Battery -= rand.Intn(2)
+	// Natural cooling
+	v.EngineTemp += (v.Speed / 120.0) * 0.3
+	v.EngineTemp += (70 - v.EngineTemp) * 0.02
+	v.EngineTemp += (rand.Float64() - 0.5) * 0.2
+
+	drainChance := 0.05 + (v.Speed / 120.0 * 0.15)
+	if rand.Float64() < drainChance {
+		v.Battery--
+	}
+
 	if v.Battery < 0 {
 		v.Battery = 0
 		v.running = false

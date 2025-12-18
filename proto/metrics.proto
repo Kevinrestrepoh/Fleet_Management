@@ -8,12 +8,13 @@ message Empty {}
 
 message FleetMetrics {
   uint32 active_vehicles = 1;
-  uint32 low_battery_vehicles = 2;
+  uint32 offline_vehicles = 2;
+  uint32 low_battery_vehicles = 3;
 
-  float avg_speed_kmh = 3;
-  float avg_engine_temp_c = 4;
+  float avg_speed_kmh = 4;
+  float avg_engine_temp_c = 5;
 
-  int64 timestamp_ms = 5;
+  int64 timestamp_ms = 6;
 }
 
 service MetricsService {

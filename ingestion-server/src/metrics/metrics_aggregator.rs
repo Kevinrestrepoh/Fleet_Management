@@ -20,28 +20,31 @@ impl MetricsAggregator {
         let now = Instant::now();
 
         let mut active = 0;
+        let mut offline = 0;
         let mut low_battery = 0;
 
         let mut speed_sum = 0.0;
         let mut temp_sum = 0.0;
 
         for v in snapshot.values() {
-            let is_active = now.duration_since(v.last_seen) < ACTIVITY_TIMEOUT;
-            if is_active {
+            if now.duration_since(v.last_seen) < ACTIVITY_TIMEOUT {
                 active += 1;
                 speed_sum += v.speed_kmh;
                 temp_sum += v.engine_temp;
-            }
 
-            if v.battery < 10 {
-                low_battery += 1;
+                if v.battery < 10 {
+                    low_battery += 1;
+                }
+            } else {
+                offline += 1;
             }
         }
 
-        let count = snapshot.len().max(1) as f32;
+        let count = active.max(1) as f32;
 
         FleetMetrics {
             active_vehicles: active,
+            offline_vehicles: offline,
             low_battery_vehicles: low_battery,
             avg_speed_kmh: speed_sum / count,
             avg_engine_temp_c: temp_sum / count,

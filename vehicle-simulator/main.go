@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	f := fleet.NewFleet(100, "localhost:50051")
+	f := fleet.NewFleet(500, "localhost:50051")
 	f.Start()
 
 	select {}
