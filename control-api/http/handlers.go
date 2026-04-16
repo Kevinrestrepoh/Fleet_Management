@@ -85,3 +85,38 @@ func (h *Handler) MetricsSSE(c echo.Context) error {
 		}
 	}
 }
+
+func (h *Handler) VehiclesSSE(c echo.Context) error {
+	stream, err := h.client.StreamFleetVehicles(c.Request().Context())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res := c.Response()
+	res.Header().Set(echo.HeaderContentType, "text/event-stream")
+	res.Header().Set(echo.HeaderCacheControl, "no-cache")
+	res.Header().Set(echo.HeaderConnection, "keep-alive")
+	res.WriteHeader(http.StatusOK)
+
+	for {
+		fleet, err := stream.Recv()
+		if err != nil {
+			return nil
+		}
+
+		payload, err := json.Marshal(fleet)
+		if err != nil {
+			continue
+		}
+
+		res.Write([]byte("data: "))
+		res.Write(payload)
+		res.Write([]byte("\n\n"))
+
+		if flusher, ok := res.Writer.(http.Flusher); ok {
+			flusher.Flush()
+		}
+	}
+}

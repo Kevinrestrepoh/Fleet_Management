@@ -46,3 +46,7 @@ func (c *Client) SendCommand(vehicleID uint32, cmd types.CommandRequest, ctx con
 func (c *Client) Stream(ctx context.Context) (metricspb.MetricsService_StreamFleetMetricsClient, error) {
 	return c.metrics.StreamFleetMetrics(ctx, &metricspb.Empty{})
 }
+
+func (c *Client) StreamFleetVehicles(ctx context.Context) (metricspb.MetricsService_StreamFleetVehiclesClient, error) {
+	return c.metrics.StreamFleetVehicles(ctx, &metricspb.Empty{})
+}
