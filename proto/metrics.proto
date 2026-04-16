@@ -17,6 +17,23 @@ message FleetMetrics {
   int64 timestamp_ms = 6;
 }
 
+message VehicleSnapshot {
+  uint32 vehicle_id = 1;
+  double lat = 2;
+  double lon = 3;
+  float speed_kmh = 4;
+  uint32 battery_percent = 5;
+  float engine_temp_c = 6;
+  int64 last_telemetry_ms = 7;
+  bool online = 8;
+}
+
+message FleetVehicles {
+  repeated VehicleSnapshot vehicles = 1;
+  int64 timestamp_ms = 2;
+}
+
 service MetricsService {
   rpc StreamFleetMetrics(Empty) returns (stream FleetMetrics);
+  rpc StreamFleetVehicles(Empty) returns (stream FleetVehicles);
 }
