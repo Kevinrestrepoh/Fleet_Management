@@ -51,9 +51,12 @@ impl VehicleTelemetryService for VehicleTelemetryServiceImpl {
                 }
 
                 let state = VehicleState {
+                    lat: telemetry.lat,
+                    lon: telemetry.lon,
                     speed_kmh: telemetry.speed_kmh,
                     battery: telemetry.battery_percent,
                     engine_temp: telemetry.engine_temp_c,
+                    last_telemetry_ms: telemetry.timestamp_ms,
                     last_seen: Instant::now(),
                 };
                 println!("telemetry received: {:?}", state);

@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
-use crate::pb::metrics::FleetMetrics;
+use crate::pb::metrics::{FleetMetrics, FleetVehicles, VehicleSnapshot};
 use crate::state::state_store::StateStore;
 
 #[derive(Clone)]
@@ -48,6 +48,38 @@ impl MetricsAggregator {
             low_battery_vehicles: low_battery,
             avg_speed_kmh: speed_sum / count,
             avg_engine_temp_c: temp_sum / count,
+            timestamp_ms: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_millis() as i64,
+        }
+    }
+
+    pub async fn fleet_vehicles_snapshot(&self) -> FleetVehicles {
+        let snapshot = self.store.snapshot().await;
+        let now = Instant::now();
+
+        let mut vehicles: Vec<VehicleSnapshot> = snapshot
+            .into_iter()
+            .map(|(id, v)| {
+                let online = now.duration_since(v.last_seen) < ACTIVITY_TIMEOUT;
+                VehicleSnapshot {
+                    vehicle_id: id,
+                    lat: v.lat,
+                    lon: v.lon,
+                    speed_kmh: v.speed_kmh,
+                    battery_percent: v.battery,
+                    engine_temp_c: v.engine_temp,
+                    last_telemetry_ms: v.last_telemetry_ms,
+                    online,
+                }
+            })
+            .collect();
+
+        vehicles.sort_by_key(|v| v.vehicle_id);
+
+        FleetVehicles {
+            vehicles,
             timestamp_ms: SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .unwrap()
