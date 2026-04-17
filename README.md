@@ -31,6 +31,11 @@ Built to explore distributed systems, gRPC streaming, and async backends using *
 - **Rust**: Ingestion and metrics server
 - **Go**: Vehicle simulator and control API
 
+### System Components
+- **Rust** → Ingestion + metrics engine (high-performance async processing)
+- **Go** → Vehicle simulator + control API
+- **Go (TUI)** → Real-time terminal dashboard for monitoring and control
+
 ---
 
 ## Example Metrics
