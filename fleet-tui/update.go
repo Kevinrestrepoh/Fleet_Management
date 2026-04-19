@@ -22,12 +22,12 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "up", "k":
 			if m.cursor > 0 {
 				m.cursor--
-				m.ensureScroll()
+				m.ensureScroll(m.innerH)
 			}
 		case "down", "j":
 			if m.cursor < len(m.vehicles)-1 {
 				m.cursor++
-				m.ensureScroll()
+				m.ensureScroll(m.innerH)
 			}
 		case "p":
 			m.dispatchCommand("PING", 0)
@@ -63,7 +63,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		idx := row - mouseContentTop + m.scroll
 		if idx >= 0 && idx < len(m.vehicles) {
 			m.cursor = idx
-			m.ensureScroll()
+			m.ensureScroll(m.innerH)
 		}
 		return m, nil
 
@@ -72,7 +72,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.cursor >= len(m.vehicles) {
 			m.cursor = max(0, len(m.vehicles)-1)
 		}
-		m.ensureScroll()
+		m.ensureScroll(m.innerH)
 		return m, nil
 
 	case metricsDataMsg:
@@ -91,22 +91,24 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m *model) ensureScroll() {
-	inner := m.listHeight()
+func (m *model) ensureScroll(inner int) {
 	if inner <= 0 || len(m.vehicles) == 0 {
 		m.scroll = 0
 		return
 	}
+
 	if m.cursor < m.scroll {
 		m.scroll = m.cursor
 	}
+
 	if m.cursor >= m.scroll+inner {
 		m.scroll = m.cursor - inner + 1
 	}
-}
 
-func (m *model) listHeight() int {
-	return max(1, m.height-m.headerLines-2)
+	maxScroll := max(0, len(m.vehicles)-inner)
+	if m.scroll > maxScroll {
+		m.scroll = maxScroll
+	}
 }
 
 func (m *model) selectedID() (uint32, bool) {

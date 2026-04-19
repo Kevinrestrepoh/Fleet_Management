@@ -14,6 +14,7 @@ type model struct {
 	rateMs      uint32
 	width       int
 	height      int
+	innerH      int
 	leftW       int
 	headerLines int
 }
