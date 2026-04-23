@@ -26,7 +26,7 @@ impl ControlService for ControlServiceImpl {
         let vehicle_id = req.vehicle_id;
         let command = req
             .command
-            .ok_or(Status::invalid_argument("command missing"))?;
+            .ok_or_else(|| Status::invalid_argument("command missing"))?;
 
         // Forward command to vehicle via registry
         self.registry
@@ -37,7 +37,8 @@ impl ControlService for ControlServiceImpl {
                     value: command.value,
                 },
             )
-            .await?;
+            .await
+            .map_err(Status::from)?;
 
         Ok(Response::new(SendCommandResponse {
             success: true,

@@ -6,6 +6,7 @@ use pb::{
 };
 use tonic::transport::Server;
 
+mod error;
 mod grpc;
 mod metrics;
 mod pb;

@@ -3,9 +3,10 @@ use std::sync::Arc;
 use tokio::sync::{RwLock, mpsc};
 use tonic::Status;
 
+use crate::error::{IngestionError, Result};
 use crate::pb::vehicle::Command;
 
-pub type CommandSender = mpsc::Sender<Result<Command, Status>>;
+pub type CommandSender = mpsc::Sender<std::result::Result<Command, Status>>;
 
 #[derive(Clone)]
 pub struct VehicleRegistry {
@@ -19,22 +20,30 @@ impl VehicleRegistry {
         }
     }
 
-    pub async fn register(&self, vehicle_id: u32, sender: CommandSender) {
-        self.inner.write().await.insert(vehicle_id, sender);
+    pub async fn register(&self, vehicle_id: u32, sender: CommandSender) -> Result<()> {
+        let mut registry = self.inner.write().await;
+
+        if registry.contains_key(&vehicle_id) {
+            return Err(IngestionError::VehicleAlreadyConnected(vehicle_id));
+        }
+
+        registry.insert(vehicle_id, sender);
+        Ok(())
     }
 
     pub async fn unregister(&self, vehicle_id: u32) {
         self.inner.write().await.remove(&vehicle_id);
     }
 
-    pub async fn send_command(&self, vehicle_id: u32, cmd: Command) -> Result<(), Status> {
+    pub async fn send_command(&self, vehicle_id: u32, cmd: Command) -> Result<()> {
         let map = self.inner.read().await;
         let sender = map
             .get(&vehicle_id)
-            .ok_or(Status::not_found("vehicle not connected"))?;
+            .ok_or_else(|| IngestionError::VehicleNotFound(vehicle_id))?;
+
         sender
             .send(Ok(cmd))
             .await
-            .map_err(|_| Status::internal("channel closed"))
+            .map_err(|_| IngestionError::CommandChannelClosed(vehicle_id))
     }
 }

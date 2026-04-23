@@ -46,7 +46,10 @@ impl VehicleTelemetryService for VehicleTelemetryServiceImpl {
                 let vid = telemetry.vehicle_id;
 
                 if vehicle_id.is_none() {
-                    registry.register(vid, tx.clone()).await;
+                    if let Err(e) = registry.register(vid, tx.clone()).await {
+                        println!("failed to register vehicle {}: {}", vid, e);
+                        continue;
+                    }
                     vehicle_id = Some(vid);
                 }
 
