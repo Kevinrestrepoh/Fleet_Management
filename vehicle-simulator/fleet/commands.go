@@ -8,7 +8,7 @@ import (
 )
 
 func (v *Vehicle) commandLoop() {
-	for {
+	for v.running {
 		cmd, err := v.stream.Recv()
 		if err != nil {
 			log.Printf("[veh %d] command stream closed: %v", v.ID, err)
