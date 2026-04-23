@@ -30,8 +30,9 @@ func (m *model) View() string {
 	bodyH := m.height - 4
 	bodyH = max(2, bodyH)
 
-	innerH := bodyH - 2
+	innerH := bodyH
 	innerH = max(1, innerH)
+	m.innerH = innerH
 
 	listInnerW := leftW - 4
 	if listInnerW < 8 {
@@ -82,10 +83,7 @@ func (m *model) renderVehicles(innerW, innerH int) string {
 		return lipgloss.NewStyle().Foreground(colorSubtle).Render("Waiting for vehicles…")
 	}
 
-	h := m.listHeight()
-	if h > innerH {
-		h = innerH
-	}
+	h := innerH
 
 	start := m.scroll
 	end := start + h

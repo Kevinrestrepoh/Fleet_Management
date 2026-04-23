@@ -4,6 +4,12 @@ A real-time fleet management system that ingests telemetry from thousands of sim
 
 Built to explore distributed systems, gRPC streaming, and async backends using **Rust** and **Go**.
 
+## Demo
+
+![Fleet TUI Demo](./demo.gif)
+
+---
+
 ## Features
 
 ### Bidirectional gRPC Streaming
