@@ -11,6 +11,8 @@ tokio-stream = "0.1.17"
 dotenv = "0.15.0"
 prost = "0.14.1"
 thiserror = "2.0.18"
+prometheus = "0.14.0"
+axum = "0.8.9"
 
 [build-dependencies]
 tonic-prost-build = "0.14.2"

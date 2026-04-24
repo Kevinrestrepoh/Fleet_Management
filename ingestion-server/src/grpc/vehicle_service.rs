@@ -1,9 +1,11 @@
+use std::sync::Arc;
 use std::time::Instant;
 
 use tokio::sync::mpsc;
 use tokio_stream::{StreamExt, wrappers::ReceiverStream};
 use tonic::{Request, Response, Status};
 
+use crate::metrics::prometheus::Metrics;
 use crate::pb::vehicle::{
     Command, Telemetry, vehicle_telemetry_service_server::VehicleTelemetryService,
 };
@@ -13,13 +15,15 @@ use crate::vehicle_registry::registry::VehicleRegistry;
 pub struct VehicleTelemetryServiceImpl {
     registry: VehicleRegistry,
     state_store: StateStore,
+    metrics: Arc<Metrics>,
 }
 
 impl VehicleTelemetryServiceImpl {
-    pub fn new(registry: VehicleRegistry, state_store: StateStore) -> Self {
+    pub fn new(registry: VehicleRegistry, state_store: StateStore, metrics: Arc<Metrics>) -> Self {
         Self {
             registry,
             state_store,
+            metrics,
         }
     }
 }
@@ -38,19 +42,24 @@ impl VehicleTelemetryService for VehicleTelemetryServiceImpl {
 
         let registry = self.registry.clone();
         let state_store = self.state_store.clone();
+        let metrics = self.metrics.clone();
 
         tokio::spawn(async move {
             let mut vehicle_id: Option<u32> = None;
 
             while let Some(Ok(telemetry)) = inbound.next().await {
+                let start_time = Instant::now();
                 let vid = telemetry.vehicle_id;
 
                 if vehicle_id.is_none() {
                     if let Err(e) = registry.register(vid, tx.clone()).await {
                         println!("failed to register vehicle {}: {}", vid, e);
+                        metrics.connection_errors.inc();
                         continue;
                     }
                     vehicle_id = Some(vid);
+                    metrics.total_connections.inc();
+                    metrics.active_connections.inc();
                 }
 
                 let state = VehicleState {
@@ -62,12 +71,17 @@ impl VehicleTelemetryService for VehicleTelemetryServiceImpl {
                     last_telemetry_ms: telemetry.timestamp_ms,
                     last_seen: Instant::now(),
                 };
-                println!("telemetry received: {:?}", state);
+
+                metrics.telemetry_received.inc();
                 state_store.upsert(vid, state).await;
+
+                let processing_time = start_time.elapsed().as_secs_f64();
+                metrics.telemetry_processing_time.observe(processing_time);
             }
 
             if let Some(id) = vehicle_id {
                 registry.unregister(id).await;
+                metrics.active_connections.dec();
             }
         });
 
