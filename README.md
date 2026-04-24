@@ -33,6 +33,15 @@ Built to explore distributed systems, gRPC streaming, and async backends using *
 ### Metrics Streaming via SSE
 - HTTP clients receive live fleet updates via Server-Sent Events (SSE).
 
+### Prometheus & Grafana Monitoring
+- **Real-time monitoring** of connections, telemetry processing, and command routing
+- **Grafana-ready** metrics for dashboard visualization
+- **Production-grade** monitoring with histograms and counters
+
+### Graceful Shutdown
+- **Clean server termination** with proper connection draining
+- **Resource cleanup** preventing memory leaks
+
 ### Multi-Language System
 - **Rust**: Ingestion and metrics server
 - **Go**: Vehicle simulator and control API
@@ -71,6 +80,10 @@ To run the ingestion server (written in **Rust**), execute the following command
 cargo run
 ```
 
+The server will start on:
+- **gRPC server**: `0.0.0.0:50051`
+- **Metrics server**: `http://0.0.0.0:9090/metrics`
+
 ### 3. Start Control API
 To run the control API (written in Go), execute the following command:
 
@@ -78,12 +91,20 @@ To run the control API (written in Go), execute the following command:
 go run main.go
 ```
 
-### 3. Start Vehicle Simulator
+### 4. Start Vehicle Simulator
 To start the vehicle simulator (also written in Go), execute the following command:
-
 
 ```bash
 go run main.go
 ```
 
+### 5. Monitor with Prometheus & Grafana (Optional)
+
+```bash
+docker-compose up -d
+```
+
+Access the dashboards:
+- **Prometheus**: http://localhost:9091
+- **Grafana**: http://localhost:3000 (admin/admin)
 
