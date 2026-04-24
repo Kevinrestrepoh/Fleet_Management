@@ -101,14 +101,6 @@ impl Metrics {
             .register(Box::new(command_processing_time.clone()))
             .unwrap();
 
-        let registry_size =
-            IntGauge::new("fleet_registry_size", "Current size of vehicle registry").unwrap();
-        registry.register(Box::new(registry_size.clone())).unwrap();
-
-        let server_uptime =
-            IntGauge::new("fleet_server_uptime_seconds", "Server uptime in seconds").unwrap();
-        registry.register(Box::new(server_uptime.clone())).unwrap();
-
         Self {
             active_connections,
             total_connections,
