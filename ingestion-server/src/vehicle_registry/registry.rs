@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::{RwLock, mpsc};
+use tokio::task::JoinSet;
 use tonic::Status;
 
 use crate::error::{IngestionError, Result};
@@ -45,5 +46,26 @@ impl VehicleRegistry {
             .send(Ok(cmd))
             .await
             .map_err(|_| IngestionError::CommandChannelClosed(vehicle_id))
+    }
+
+    pub async fn shutdown(&self) {
+        println!("Shutting down vehicle registry...");
+
+        let senders: Vec<_> = {
+            let mut registry = self.inner.write().await;
+            registry.drain().collect()
+        };
+
+        let mut set = JoinSet::new();
+        for (_, sender) in senders {
+            set.spawn(async move {
+                let _ = sender
+                    .send(Err(Status::unavailable("Server shutting down")))
+                    .await;
+            });
+        }
+        set.join_all().await;
+
+        println!("Vehicle registry shutdown complete");
     }
 }
