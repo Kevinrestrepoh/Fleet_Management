@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Kevinrestrepoh/vehicle-simulator/fleet"
+	"github.com/kevinrst/vehicle-simulator/fleet"
 )
 
 func main() {

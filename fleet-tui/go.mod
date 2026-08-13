@@ -1,4 +1,4 @@
-module github.com/Kevinrestrepoh/fleet-tui
+module github.com/kevinrst/fleet-tui
 
 go 1.26.1
 

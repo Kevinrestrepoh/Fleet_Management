@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Kevinrestrepoh/fleet-tui/util"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/kevinrst/fleet-tui/util"
 )
 
 var (

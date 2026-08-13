@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/Kevinrestrepoh/control-api/grpc"
-	"github.com/Kevinrestrepoh/control-api/http"
+	"github.com/kevinrst/control-api/grpc"
+	"github.com/kevinrst/control-api/http"
 	"github.com/labstack/echo/v4"
 )
 

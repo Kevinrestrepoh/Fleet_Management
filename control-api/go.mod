@@ -1,4 +1,4 @@
-module github.com/Kevinrestrepoh/control-api
+module github.com/kevinrst/control-api
 
 go 1.24.0
 

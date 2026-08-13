@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/Kevinrestrepoh/control-api/proto/controlpb"
-	"github.com/Kevinrestrepoh/control-api/proto/metricspb"
-	"github.com/Kevinrestrepoh/control-api/types"
+	"github.com/kevinrst/control-api/proto/controlpb"
+	"github.com/kevinrst/control-api/proto/metricspb"
+	"github.com/kevinrst/control-api/types"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

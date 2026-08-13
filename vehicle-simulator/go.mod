@@ -1,4 +1,4 @@
-module github.com/Kevinrestrepoh/vehicle-simulator
+module github.com/kevinrst/vehicle-simulator
 
 go 1.24.0
 

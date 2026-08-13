@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/Kevinrestrepoh/vehicle-simulator/proto/vehiclepb"
+	"github.com/kevinrst/vehicle-simulator/proto/vehiclepb"
 )
 
 func (v *Vehicle) telemetryLoop() {

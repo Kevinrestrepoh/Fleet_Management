@@ -3,7 +3,7 @@ package fleet
 import (
 	"context"
 
-	"github.com/Kevinrestrepoh/vehicle-simulator/proto/vehiclepb"
+	"github.com/kevinrst/vehicle-simulator/proto/vehiclepb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

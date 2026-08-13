@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Kevinrestrepoh/control-api/grpc"
-	"github.com/Kevinrestrepoh/control-api/types"
+	"github.com/kevinrst/control-api/grpc"
+	"github.com/kevinrst/control-api/types"
 	"github.com/labstack/echo/v4"
 )
 
